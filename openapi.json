@@ -1,0 +1,3545 @@
+{
+  "openapi": "3.1.0",
+  "info": {
+    "title": "UofTHacks 13 Backend Service",
+    "version": "13.0.0"
+  },
+  "paths": {
+    "/": {
+      "get": {
+        "tags": [
+          "Root"
+        ],
+        "summary": "Welcome Root",
+        "operationId": "welcome_root__get",
+        "responses": {
+          "200": {
+            "description": "Successful Response",
+            "content": {
+              "application/json": {
+                "schema": {}
+              }
+            }
+          }
+        }
+      }
+    },
+    "/api/health/_live": {
+      "get": {
+        "tags": [
+          "Health"
+        ],
+        "summary": "Health Check",
+        "description": "Health check endpoint to verify the service is live.",
+        "operationId": "health_check_api_health__live_get",
+        "responses": {
+          "200": {
+            "description": "Successful Response",
+            "content": {
+              "application/json": {
+                "schema": {}
+              }
+            }
+          }
+        }
+      }
+    },
+    "/api/v13/hackers/profile": {
+      "get": {
+        "tags": [
+          "Hackers"
+        ],
+        "summary": "Get the profile of the currently authenticated hacker",
+        "description": "Fetch the currently authenticated hacker's profile using token-based authentication.",
+        "operationId": "get_hacker_profile_api_v13_hackers_profile_get",
+        "responses": {
+          "200": {
+            "description": "Successful Response",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/HackerProfileRead"
+                }
+              }
+            }
+          }
+        },
+        "security": [
+          {
+            "HTTPBearer": []
+          }
+        ]
+      }
+    },
+    "/api/v13/hackers/register": {
+      "post": {
+        "tags": [
+          "Hackers"
+        ],
+        "summary": "Register a new hacker account",
+        "operationId": "register_hacker_api_v13_hackers_register_post",
+        "requestBody": {
+          "content": {
+            "application/json": {
+              "schema": {
+                "properties": {
+                  "hacker_fname": {
+                    "type": "string",
+                    "title": "Hacker Fname"
+                  },
+                  "hacker_lname": {
+                    "type": "string",
+                    "title": "Hacker Lname"
+                  },
+                  "hacker_email": {
+                    "type": "string",
+                    "format": "email",
+                    "title": "Hacker Email"
+                  },
+                  "hacker_password": {
+                    "anyOf": [
+                      {
+                        "type": "string"
+                      },
+                      {
+                        "type": "null"
+                      }
+                    ],
+                    "title": "Hacker Password"
+                  },
+                  "hacker_verified": {
+                    "type": "boolean",
+                    "title": "Hacker Verified",
+                    "default": false
+                  },
+                  "hacker_password_cmp": {
+                    "type": "string",
+                    "title": "Hacker Password Cmp"
+                  }
+                },
+                "type": "object",
+                "required": [
+                  "hacker_fname",
+                  "hacker_lname",
+                  "hacker_email",
+                  "hacker_password_cmp"
+                ],
+                "title": "HackerRegister"
+              }
+            }
+          },
+          "required": true
+        },
+        "responses": {
+          "201": {
+            "description": "Successful Response",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/HackerRead"
+                }
+              }
+            }
+          },
+          "422": {
+            "description": "Validation Error",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/HTTPValidationError"
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    "/api/v13/hackers/login": {
+      "post": {
+        "tags": [
+          "Hackers"
+        ],
+        "summary": "Login a hacker and get access/refresh tokens",
+        "operationId": "login_hacker_api_v13_hackers_login_post",
+        "requestBody": {
+          "content": {
+            "application/json": {
+              "schema": {
+                "properties": {
+                  "hacker_email": {
+                    "type": "string",
+                    "format": "email",
+                    "title": "Hacker Email"
+                  },
+                  "hacker_password": {
+                    "type": "string",
+                    "title": "Hacker Password"
+                  }
+                },
+                "type": "object",
+                "required": [
+                  "hacker_email",
+                  "hacker_password"
+                ],
+                "title": "HackerLoginRequest"
+              }
+            }
+          },
+          "required": true
+        },
+        "responses": {
+          "200": {
+            "description": "Successful Response",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/TokenPair"
+                }
+              }
+            }
+          },
+          "422": {
+            "description": "Validation Error",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/HTTPValidationError"
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    "/api/v13/hackers/logout": {
+      "post": {
+        "tags": [
+          "Hackers"
+        ],
+        "summary": "Logout a hacker and revoke tokens",
+        "operationId": "logout_hacker_api_v13_hackers_logout_post",
+        "requestBody": {
+          "content": {
+            "application/json": {
+              "schema": {
+                "properties": {
+                  "access_token": {
+                    "type": "string",
+                    "title": "Access Token"
+                  },
+                  "refresh_token": {
+                    "type": "string",
+                    "title": "Refresh Token"
+                  }
+                },
+                "type": "object",
+                "required": [
+                  "access_token",
+                  "refresh_token"
+                ],
+                "title": "TokenPair"
+              }
+            }
+          },
+          "required": true
+        },
+        "responses": {
+          "204": {
+            "description": "Successful Response"
+          },
+          "422": {
+            "description": "Validation Error",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/HTTPValidationError"
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    "/api/v13/hackers/refresh": {
+      "post": {
+        "tags": [
+          "Hackers"
+        ],
+        "summary": "Refresh a hacker's access and refresh token pair",
+        "operationId": "refresh_hacker_token_api_v13_hackers_refresh_post",
+        "requestBody": {
+          "content": {
+            "application/json": {
+              "schema": {
+                "properties": {
+                  "refresh_token": {
+                    "type": "string",
+                    "title": "Refresh Token"
+                  }
+                },
+                "type": "object",
+                "required": [
+                  "refresh_token"
+                ],
+                "title": "TokenRefreshRequest"
+              }
+            }
+          },
+          "required": true
+        },
+        "responses": {
+          "200": {
+            "description": "Successful Response",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/TokenPair"
+                }
+              }
+            }
+          },
+          "422": {
+            "description": "Validation Error",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/HTTPValidationError"
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    "/api/v13/hackers/personality": {
+      "post": {
+        "tags": [
+          "Hackers"
+        ],
+        "summary": "Submit hacker personality quiz result",
+        "description": "Sets the hacker's personality after completing the personality quiz. Requires authentication. This updates the hacker's profile with the selected personality.",
+        "operationId": "set_hacker_personality_api_v13_hackers_personality_post",
+        "requestBody": {
+          "content": {
+            "application/json": {
+              "schema": {
+                "properties": {
+                  "hacker_personality": {
+                    "type": "string",
+                    "maxLength": 255,
+                    "minLength": 1,
+                    "title": "Hacker Personality"
+                  }
+                },
+                "type": "object",
+                "required": [
+                  "hacker_personality"
+                ],
+                "title": "HackerPersonalityUpdateRequest"
+              }
+            }
+          },
+          "required": true
+        },
+        "responses": {
+          "200": {
+            "description": "Successful Response",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/HackerRead"
+                }
+              }
+            }
+          },
+          "422": {
+            "description": "Validation Error",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/HTTPValidationError"
+                }
+              }
+            }
+          }
+        },
+        "security": [
+          {
+            "HTTPBearer": []
+          }
+        ]
+      }
+    },
+    "/api/v13/hackers/rsvp": {
+      "post": {
+        "tags": [
+          "Hackers"
+        ],
+        "summary": "Submit RSVP for the currently authenticated hacker",
+        "description": "Requires a hacker access token in the Authorization header as a Bearer token.",
+        "operationId": "submit_rsvp_api_v13_hackers_rsvp_post",
+        "parameters": [
+          {
+            "name": "allow_internal_bypass",
+            "in": "query",
+            "required": false,
+            "schema": {
+              "type": "boolean",
+              "default": false,
+              "title": "Allow Internal Bypass"
+            }
+          }
+        ],
+        "requestBody": {
+          "required": true,
+          "content": {
+            "application/json": {
+              "schema": {
+                "properties": {
+                  "shirt_size": {
+                    "anyOf": [
+                      {
+                        "type": "string"
+                      },
+                      {
+                        "type": "null"
+                      }
+                    ],
+                    "title": "Shirt Size"
+                  },
+                  "in_person": {
+                    "anyOf": [
+                      {
+                        "type": "boolean"
+                      },
+                      {
+                        "type": "null"
+                      }
+                    ],
+                    "title": "In Person"
+                  },
+                  "address": {
+                    "anyOf": [
+                      {
+                        "type": "string"
+                      },
+                      {
+                        "type": "null"
+                      }
+                    ],
+                    "title": "Address"
+                  },
+                  "phone_num": {
+                    "anyOf": [
+                      {
+                        "type": "string"
+                      },
+                      {
+                        "type": "null"
+                      }
+                    ],
+                    "title": "Phone Num"
+                  },
+                  "emergency_num": {
+                    "anyOf": [
+                      {
+                        "type": "string"
+                      },
+                      {
+                        "type": "null"
+                      }
+                    ],
+                    "title": "Emergency Num"
+                  },
+                  "emergency_name": {
+                    "anyOf": [
+                      {
+                        "type": "string"
+                      },
+                      {
+                        "type": "null"
+                      }
+                    ],
+                    "title": "Emergency Name"
+                  },
+                  "dietary_condition": {
+                    "anyOf": [
+                      {
+                        "type": "string"
+                      },
+                      {
+                        "type": "null"
+                      }
+                    ],
+                    "title": "Dietary Condition"
+                  }
+                },
+                "type": "object",
+                "title": "RSVPCreate"
+              }
+            }
+          }
+        },
+        "responses": {
+          "201": {
+            "description": "Successful Response",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/RSVPRead"
+                }
+              }
+            }
+          },
+          "422": {
+            "description": "Validation Error",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/HTTPValidationError"
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    "/api/v13/hackers/application/": {
+      "get": {
+        "tags": [
+          "Hacker Application"
+        ],
+        "summary": "Get current hacker's application",
+        "description": "Returns the application submitted by the authenticated hacker.",
+        "operationId": "get_my_application_api_v13_hackers_application__get",
+        "responses": {
+          "200": {
+            "description": "Successful Response",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ApplicationRead"
+                }
+              }
+            }
+          }
+        },
+        "security": [
+          {
+            "HTTPBearer": []
+          }
+        ]
+      },
+      "post": {
+        "tags": [
+          "Hacker Application"
+        ],
+        "summary": "Submit a new application",
+        "description": "Authenticated hackers can submit a new application. Only one application is allowed per hacker.",
+        "operationId": "create_application_api_v13_hackers_application__post",
+        "requestBody": {
+          "content": {
+            "application/json": {
+              "schema": {
+                "properties": {
+                  "hacker_id": {
+                    "type": "integer",
+                    "title": "Hacker Id"
+                  },
+                  "admin_id": {
+                    "anyOf": [
+                      {
+                        "type": "integer"
+                      },
+                      {
+                        "type": "null"
+                      }
+                    ],
+                    "title": "Admin Id"
+                  },
+                  "status": {
+                    "$ref": "#/components/schemas/ApplicationStatus",
+                    "default": "pending"
+                  },
+                  "first_name": {
+                    "type": "string",
+                    "title": "First Name",
+                    "default": ""
+                  },
+                  "last_name": {
+                    "type": "string",
+                    "title": "Last Name",
+                    "default": ""
+                  },
+                  "preferred_name": {
+                    "type": "string",
+                    "title": "Preferred Name",
+                    "default": ""
+                  },
+                  "gender": {
+                    "type": "string",
+                    "title": "Gender",
+                    "default": ""
+                  },
+                  "pronoun": {
+                    "type": "string",
+                    "title": "Pronoun",
+                    "default": ""
+                  },
+                  "age": {
+                    "type": "integer",
+                    "title": "Age",
+                    "default": 0
+                  },
+                  "discord_username": {
+                    "type": "string",
+                    "title": "Discord Username",
+                    "default": ""
+                  },
+                  "phone_number": {
+                    "type": "string",
+                    "title": "Phone Number",
+                    "default": ""
+                  },
+                  "email": {
+                    "type": "string",
+                    "format": "email",
+                    "title": "Email",
+                    "default": "unknown@unknown.com"
+                  },
+                  "school": {
+                    "type": "string",
+                    "title": "School",
+                    "default": ""
+                  },
+                  "level_of_study": {
+                    "type": "string",
+                    "title": "Level Of Study",
+                    "default": ""
+                  },
+                  "major": {
+                    "type": "string",
+                    "title": "Major",
+                    "default": ""
+                  },
+                  "num_hackathons": {
+                    "type": "integer",
+                    "title": "Num Hackathons",
+                    "default": 0
+                  },
+                  "country_of_residence": {
+                    "type": "string",
+                    "title": "Country Of Residence",
+                    "default": ""
+                  },
+                  "city": {
+                    "type": "string",
+                    "title": "City",
+                    "default": ""
+                  },
+                  "elevation_pitch": {
+                    "type": "string",
+                    "title": "Elevation Pitch",
+                    "default": ""
+                  },
+                  "resume_path": {
+                    "type": "string",
+                    "title": "Resume Path",
+                    "default": ""
+                  },
+                  "github_url": {
+                    "type": "string",
+                    "title": "Github Url",
+                    "default": ""
+                  },
+                  "linkedin_url": {
+                    "type": "string",
+                    "title": "Linkedin Url",
+                    "default": ""
+                  },
+                  "other_links": {
+                    "type": "string",
+                    "title": "Other Links",
+                    "default": ""
+                  },
+                  "ethnicity": {
+                    "type": "string",
+                    "title": "Ethnicity",
+                    "default": ""
+                  },
+                  "question_lens": {
+                    "type": "string",
+                    "title": "Question Lens",
+                    "default": ""
+                  },
+                  "question_fictional": {
+                    "type": "string",
+                    "title": "Question Fictional",
+                    "default": ""
+                  },
+                  "question_optional": {
+                    "type": "string",
+                    "title": "Question Optional",
+                    "default": ""
+                  },
+                  "mlh_coc": {
+                    "type": "boolean",
+                    "title": "Mlh Coc",
+                    "default": false
+                  },
+                  "mlh_ctc_pp": {
+                    "type": "boolean",
+                    "title": "Mlh Ctc Pp",
+                    "default": false
+                  },
+                  "mlh_marketing": {
+                    "type": "boolean",
+                    "title": "Mlh Marketing",
+                    "default": false
+                  }
+                },
+                "type": "object",
+                "required": [
+                  "hacker_id"
+                ],
+                "title": "ApplicationCreate"
+              }
+            }
+          },
+          "required": true
+        },
+        "responses": {
+          "201": {
+            "description": "Successful Response",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ApplicationRead"
+                }
+              }
+            }
+          },
+          "422": {
+            "description": "Validation Error",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/HTTPValidationError"
+                }
+              }
+            }
+          }
+        },
+        "security": [
+          {
+            "HTTPBearer": []
+          }
+        ]
+      }
+    },
+    "/api/v13/hackers/application/resume": {
+      "get": {
+        "tags": [
+          "Hacker Application"
+        ],
+        "summary": "Download resume PDF for the authenticated hacker",
+        "description": "Fetches the resume file previously uploaded for this hacker. Requires hacker access token.",
+        "operationId": "download_resume_api_v13_hackers_application_resume_get",
+        "responses": {
+          "200": {
+            "description": "Successful Response"
+          }
+        },
+        "security": [
+          {
+            "HTTPBearer": []
+          }
+        ]
+      },
+      "post": {
+        "tags": [
+          "Hacker Application"
+        ],
+        "summary": "Upload resume PDF for the authenticated hacker",
+        "description": "Accepts a `.pdf` file and updates the hacker's application with the resume path. Requires hacker access token.",
+        "operationId": "upload_resume_api_v13_hackers_application_resume_post",
+        "requestBody": {
+          "content": {
+            "multipart/form-data": {
+              "schema": {
+                "properties": {
+                  "resume": {
+                    "type": "string",
+                    "format": "binary",
+                    "title": "Resume"
+                  }
+                },
+                "type": "object",
+                "required": [
+                  "resume"
+                ],
+                "title": "Body_upload_resume_api_v13_hackers_application_resume_post"
+              }
+            }
+          },
+          "required": true
+        },
+        "responses": {
+          "200": {
+            "description": "Successful Response",
+            "content": {
+              "application/json": {
+                "schema": {}
+              }
+            }
+          },
+          "422": {
+            "description": "Validation Error",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/HTTPValidationError"
+                }
+              }
+            }
+          }
+        },
+        "security": [
+          {
+            "HTTPBearer": []
+          }
+        ]
+      }
+    },
+    "/api/v13/hackers/reset-password/": {
+      "post": {
+        "tags": [
+          "Hacker Reset Password"
+        ],
+        "summary": "Reset password for the authenticated hacker",
+        "description": "Requires authentication. This will set a new password for the hacker.",
+        "operationId": "reset_password_api_v13_hackers_reset_password__post",
+        "parameters": [
+          {
+            "name": "token",
+            "in": "query",
+            "required": true,
+            "schema": {
+              "type": "string",
+              "description": "Access token passed via query param",
+              "title": "Token"
+            },
+            "description": "Access token passed via query param"
+          }
+        ],
+        "requestBody": {
+          "required": true,
+          "content": {
+            "application/json": {
+              "schema": {
+                "properties": {
+                  "new_password": {
+                    "type": "string",
+                    "title": "New Password"
+                  },
+                  "new_password_cmp": {
+                    "type": "string",
+                    "title": "New Password Cmp"
+                  }
+                },
+                "type": "object",
+                "required": [
+                  "new_password",
+                  "new_password_cmp"
+                ],
+                "title": "HackerPasswordResetRequest"
+              }
+            }
+          }
+        },
+        "responses": {
+          "200": {
+            "description": "Successful Response",
+            "content": {
+              "application/json": {
+                "schema": {}
+              }
+            }
+          },
+          "422": {
+            "description": "Validation Error",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/HTTPValidationError"
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    "/api/v13/hackers/reset-password/email": {
+      "post": {
+        "tags": [
+          "Hacker Reset Password"
+        ],
+        "summary": "Send password reset email",
+        "description": "Sends an email with a password reset link to the hacker's email address.",
+        "operationId": "send_reset_password_email_api_v13_hackers_reset_password_email_post",
+        "requestBody": {
+          "content": {
+            "application/json": {
+              "schema": {
+                "properties": {
+                  "hacker_email": {
+                    "type": "string",
+                    "format": "email",
+                    "title": "Hacker Email"
+                  }
+                },
+                "type": "object",
+                "required": [
+                  "hacker_email"
+                ],
+                "title": "HackerResetPasswordEmailRequest"
+              }
+            }
+          },
+          "required": true
+        },
+        "responses": {
+          "200": {
+            "description": "Successful Response",
+            "content": {
+              "application/json": {
+                "schema": {}
+              }
+            }
+          },
+          "422": {
+            "description": "Validation Error",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/HTTPValidationError"
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    "/api/v13/hackers/verify/email": {
+      "post": {
+        "tags": [
+          "Hacker Verification"
+        ],
+        "summary": "Send verification email to a hacker",
+        "operationId": "send_verification_email_api_v13_hackers_verify_email_post",
+        "requestBody": {
+          "required": true,
+          "content": {
+            "application/json": {
+              "schema": {
+                "properties": {
+                  "hacker_email": {
+                    "type": "string",
+                    "format": "email",
+                    "title": "Hacker Email"
+                  }
+                },
+                "type": "object",
+                "required": [
+                  "hacker_email"
+                ],
+                "title": "HackerEmailVerifyRequest"
+              }
+            }
+          }
+        },
+        "responses": {
+          "200": {
+            "description": "Successful Response",
+            "content": {
+              "application/json": {
+                "schema": {}
+              }
+            }
+          },
+          "422": {
+            "description": "Validation Error",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/HTTPValidationError"
+                }
+              }
+            }
+          }
+        }
+      },
+      "get": {
+        "tags": [
+          "Hacker Verification"
+        ],
+        "summary": "Verify hacker email from token",
+        "operationId": "confirm_email_token_api_v13_hackers_verify_email_get",
+        "parameters": [
+          {
+            "name": "token",
+            "in": "query",
+            "required": true,
+            "schema": {
+              "type": "string",
+              "description": "Email verification token from URL",
+              "title": "Token"
+            },
+            "description": "Email verification token from URL"
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "Successful Response",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/HackerRead"
+                }
+              }
+            }
+          },
+          "422": {
+            "description": "Validation Error",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/HTTPValidationError"
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    "/api/v13/hackers/google-auth/token": {
+      "post": {
+        "tags": [
+          "Hackers Google Auth"
+        ],
+        "summary": "Authenticate via Google (Auth Code + PKCE)",
+        "description": "Exchange a one-time authorization code (with PKCE verifier) for an ID + access token, verify them, fetch full profile, and return your app\u2019s JWTs.",
+        "operationId": "google_token_auth_api_v13_hackers_google_auth_token_post",
+        "requestBody": {
+          "content": {
+            "application/json": {
+              "schema": {
+                "properties": {
+                  "code": {
+                    "type": "string",
+                    "title": "Code"
+                  },
+                  "code_verifier": {
+                    "type": "string",
+                    "title": "Code Verifier"
+                  }
+                },
+                "type": "object",
+                "required": [
+                  "code",
+                  "code_verifier"
+                ],
+                "title": "GoogleAuthCodeRequest"
+              }
+            }
+          },
+          "required": true
+        },
+        "responses": {
+          "200": {
+            "description": "Successful Response",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/TokenPair"
+                }
+              }
+            }
+          },
+          "422": {
+            "description": "Validation Error",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/HTTPValidationError"
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    "/api/v13/admins/": {
+      "get": {
+        "tags": [
+          "Admins"
+        ],
+        "summary": "Get a list of all admins (admin manager only)",
+        "description": "Requires an admin access token as a Bearer token in the Authorization header, or an internal API key if provided. Only admin managers can call this endpoint.",
+        "operationId": "get_all_admins_api_v13_admins__get",
+        "responses": {
+          "200": {
+            "description": "Successful Response",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "items": {
+                    "$ref": "#/components/schemas/AdminRead"
+                  },
+                  "type": "array",
+                  "title": "Response Get All Admins Api V13 Admins  Get"
+                }
+              }
+            }
+          }
+        },
+        "security": [
+          {
+            "HTTPBearer": []
+          }
+        ]
+      },
+      "post": {
+        "tags": [
+          "Admins"
+        ],
+        "summary": "Create a new admin user",
+        "description": "Requires an admin access token as a Bearer token in the Authorization header, or an internal API key if provided. Only admin managers can call this endpoint.",
+        "operationId": "create_admin_api_v13_admins__post",
+        "requestBody": {
+          "content": {
+            "application/json": {
+              "schema": {
+                "properties": {
+                  "admin_username": {
+                    "type": "string",
+                    "title": "Admin Username"
+                  },
+                  "admin_role": {
+                    "$ref": "#/components/schemas/AdminRole"
+                  },
+                  "is_marking_manager": {
+                    "type": "boolean",
+                    "title": "Is Marking Manager",
+                    "default": false
+                  },
+                  "is_shift_manager": {
+                    "type": "boolean",
+                    "title": "Is Shift Manager",
+                    "default": false
+                  },
+                  "is_admin_manager": {
+                    "type": "boolean",
+                    "title": "Is Admin Manager",
+                    "default": false
+                  },
+                  "admin_password": {
+                    "type": "string",
+                    "title": "Admin Password"
+                  }
+                },
+                "type": "object",
+                "required": [
+                  "admin_username",
+                  "admin_role",
+                  "admin_password"
+                ],
+                "title": "AdminCreate"
+              }
+            }
+          },
+          "required": true
+        },
+        "responses": {
+          "201": {
+            "description": "Successful Response",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/AdminRead"
+                }
+              }
+            }
+          },
+          "422": {
+            "description": "Validation Error",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/HTTPValidationError"
+                }
+              }
+            }
+          }
+        },
+        "security": [
+          {
+            "HTTPBearer": []
+          }
+        ]
+      }
+    },
+    "/api/v13/admins/profile": {
+      "get": {
+        "tags": [
+          "Admins"
+        ],
+        "summary": "Get the profile of the currently authenticated admin",
+        "description": "Fetch the currently authenticated admin's profile using token-based authentication.",
+        "operationId": "get_admin_profile_api_v13_admins_profile_get",
+        "responses": {
+          "200": {
+            "description": "Successful Response",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/AdminRead"
+                }
+              }
+            }
+          }
+        },
+        "security": [
+          {
+            "HTTPBearer": []
+          }
+        ]
+      }
+    },
+    "/api/v13/admins/{admin_id}": {
+      "get": {
+        "tags": [
+          "Admins"
+        ],
+        "summary": "Get admin details by ID (requires Bearer token)",
+        "description": "Requires an admin access token as a Bearer token in the Authorization header, or an internal API key if provided. Only admin managers can call this endpoint.",
+        "operationId": "get_admin_by_id_api_v13_admins__admin_id__get",
+        "security": [
+          {
+            "HTTPBearer": []
+          }
+        ],
+        "parameters": [
+          {
+            "name": "admin_id",
+            "in": "path",
+            "required": true,
+            "schema": {
+              "type": "integer",
+              "title": "Admin Id"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "Successful Response",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/AdminRead"
+                }
+              }
+            }
+          },
+          "422": {
+            "description": "Validation Error",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/HTTPValidationError"
+                }
+              }
+            }
+          }
+        }
+      },
+      "put": {
+        "tags": [
+          "Admins"
+        ],
+        "summary": "Update an admin by ID",
+        "description": "Requires an admin access token as a Bearer token in the Authorization header, or an internal API key if provided. Only admin managers can call this endpoint.",
+        "operationId": "update_admin_api_v13_admins__admin_id__put",
+        "security": [
+          {
+            "HTTPBearer": []
+          }
+        ],
+        "parameters": [
+          {
+            "name": "admin_id",
+            "in": "path",
+            "required": true,
+            "schema": {
+              "type": "integer",
+              "title": "Admin Id"
+            }
+          }
+        ],
+        "requestBody": {
+          "required": true,
+          "content": {
+            "application/json": {
+              "schema": {
+                "properties": {
+                  "admin_password": {
+                    "anyOf": [
+                      {
+                        "type": "string"
+                      },
+                      {
+                        "type": "null"
+                      }
+                    ],
+                    "title": "Admin Password"
+                  },
+                  "admin_role": {
+                    "anyOf": [
+                      {
+                        "$ref": "#/components/schemas/AdminRole"
+                      },
+                      {
+                        "type": "null"
+                      }
+                    ]
+                  },
+                  "is_marking_manager": {
+                    "anyOf": [
+                      {
+                        "type": "boolean"
+                      },
+                      {
+                        "type": "null"
+                      }
+                    ],
+                    "title": "Is Marking Manager"
+                  },
+                  "is_shift_manager": {
+                    "anyOf": [
+                      {
+                        "type": "boolean"
+                      },
+                      {
+                        "type": "null"
+                      }
+                    ],
+                    "title": "Is Shift Manager"
+                  },
+                  "is_admin_manager": {
+                    "anyOf": [
+                      {
+                        "type": "boolean"
+                      },
+                      {
+                        "type": "null"
+                      }
+                    ],
+                    "title": "Is Admin Manager"
+                  },
+                  "last_login": {
+                    "anyOf": [
+                      {
+                        "type": "string",
+                        "format": "date-time"
+                      },
+                      {
+                        "type": "null"
+                      }
+                    ],
+                    "title": "Last Login"
+                  }
+                },
+                "type": "object",
+                "title": "AdminUpdate"
+              }
+            }
+          }
+        },
+        "responses": {
+          "200": {
+            "description": "Successful Response",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/AdminRead"
+                }
+              }
+            }
+          },
+          "422": {
+            "description": "Validation Error",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/HTTPValidationError"
+                }
+              }
+            }
+          }
+        }
+      },
+      "delete": {
+        "tags": [
+          "Admins"
+        ],
+        "summary": "Delete an admin by ID",
+        "description": "Requires an admin access token as a Bearer token in the Authorization header, or an internal API key if provided. Only admin managers can call this endpoint.",
+        "operationId": "delete_admin_api_v13_admins__admin_id__delete",
+        "security": [
+          {
+            "HTTPBearer": []
+          }
+        ],
+        "parameters": [
+          {
+            "name": "admin_id",
+            "in": "path",
+            "required": true,
+            "schema": {
+              "type": "integer",
+              "title": "Admin Id"
+            }
+          }
+        ],
+        "responses": {
+          "204": {
+            "description": "Successful Response"
+          },
+          "422": {
+            "description": "Validation Error",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/HTTPValidationError"
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    "/api/v13/admins/login": {
+      "post": {
+        "tags": [
+          "Admins"
+        ],
+        "summary": "Login as an admin",
+        "description": "Authenticate with username and password to receive access and refresh tokens.",
+        "operationId": "login_admin_api_v13_admins_login_post",
+        "requestBody": {
+          "content": {
+            "application/json": {
+              "schema": {
+                "properties": {
+                  "admin_username": {
+                    "type": "string",
+                    "title": "Admin Username"
+                  },
+                  "admin_password": {
+                    "type": "string",
+                    "title": "Admin Password"
+                  }
+                },
+                "type": "object",
+                "required": [
+                  "admin_username",
+                  "admin_password"
+                ],
+                "title": "AdminLoginRequest"
+              }
+            }
+          },
+          "required": true
+        },
+        "responses": {
+          "200": {
+            "description": "Successful Response",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/TokenPair"
+                }
+              }
+            }
+          },
+          "422": {
+            "description": "Validation Error",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/HTTPValidationError"
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    "/api/v13/admins/refresh": {
+      "post": {
+        "tags": [
+          "Admins"
+        ],
+        "summary": "Refresh admin access and refresh token pair",
+        "description": "Exchange a valid refresh token for a new access/refresh token pair.",
+        "operationId": "refresh_admin_token_api_v13_admins_refresh_post",
+        "requestBody": {
+          "content": {
+            "application/json": {
+              "schema": {
+                "properties": {
+                  "refresh_token": {
+                    "type": "string",
+                    "title": "Refresh Token"
+                  }
+                },
+                "type": "object",
+                "required": [
+                  "refresh_token"
+                ],
+                "title": "TokenRefreshRequest"
+              }
+            }
+          },
+          "required": true
+        },
+        "responses": {
+          "200": {
+            "description": "Successful Response",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/TokenPair"
+                }
+              }
+            }
+          },
+          "422": {
+            "description": "Validation Error",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/HTTPValidationError"
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    "/api/v13/admins/logout": {
+      "post": {
+        "tags": [
+          "Admins"
+        ],
+        "summary": "Logout an admin",
+        "description": "Invalidate the current access and refresh tokens.",
+        "operationId": "logout_admin_api_v13_admins_logout_post",
+        "requestBody": {
+          "content": {
+            "application/json": {
+              "schema": {
+                "properties": {
+                  "access_token": {
+                    "type": "string",
+                    "title": "Access Token"
+                  },
+                  "refresh_token": {
+                    "type": "string",
+                    "title": "Refresh Token"
+                  }
+                },
+                "type": "object",
+                "required": [
+                  "access_token",
+                  "refresh_token"
+                ],
+                "title": "TokenPair"
+              }
+            }
+          },
+          "required": true
+        },
+        "responses": {
+          "204": {
+            "description": "Successful Response"
+          },
+          "422": {
+            "description": "Validation Error",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/HTTPValidationError"
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    "/api/v13/admins/applications/": {
+      "get": {
+        "tags": [
+          "Admin Hacker Application Management"
+        ],
+        "summary": "Get all hacker applications",
+        "description": "Requires an admin access token. Only organizers can access all applications.",
+        "operationId": "list_all_applications_api_v13_admins_applications__get",
+        "responses": {
+          "200": {
+            "description": "Successful Response",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "items": {
+                    "$ref": "#/components/schemas/ApplicationRead"
+                  },
+                  "type": "array",
+                  "title": "Response List All Applications Api V13 Admins Applications  Get"
+                }
+              }
+            }
+          }
+        },
+        "security": [
+          {
+            "HTTPBearer": []
+          }
+        ]
+      }
+    },
+    "/api/v13/admins/applications/{application_id}": {
+      "get": {
+        "tags": [
+          "Admin Hacker Application Management"
+        ],
+        "summary": "Get a hacker application by ID",
+        "description": "Requires an admin access token.",
+        "operationId": "get_application_by_id_api_v13_admins_applications__application_id__get",
+        "security": [
+          {
+            "HTTPBearer": []
+          }
+        ],
+        "parameters": [
+          {
+            "name": "application_id",
+            "in": "path",
+            "required": true,
+            "schema": {
+              "type": "integer",
+              "title": "Application Id"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "Successful Response",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ApplicationRead"
+                }
+              }
+            }
+          },
+          "422": {
+            "description": "Validation Error",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/HTTPValidationError"
+                }
+              }
+            }
+          }
+        }
+      },
+      "put": {
+        "tags": [
+          "Admin Hacker Application Management"
+        ],
+        "summary": "Update a hacker application",
+        "description": "Allows authorized admin to score or update a hacker application.",
+        "operationId": "update_application_by_id_api_v13_admins_applications__application_id__put",
+        "security": [
+          {
+            "HTTPBearer": []
+          }
+        ],
+        "parameters": [
+          {
+            "name": "application_id",
+            "in": "path",
+            "required": true,
+            "schema": {
+              "type": "integer",
+              "title": "Application Id"
+            }
+          }
+        ],
+        "requestBody": {
+          "required": true,
+          "content": {
+            "application/json": {
+              "schema": {
+                "properties": {
+                  "status": {
+                    "anyOf": [
+                      {
+                        "$ref": "#/components/schemas/ApplicationStatus"
+                      },
+                      {
+                        "type": "null"
+                      }
+                    ]
+                  },
+                  "admin_id": {
+                    "anyOf": [
+                      {
+                        "type": "integer"
+                      },
+                      {
+                        "type": "null"
+                      }
+                    ],
+                    "title": "Admin Id"
+                  },
+                  "elevation_pitch": {
+                    "anyOf": [
+                      {
+                        "type": "string"
+                      },
+                      {
+                        "type": "null"
+                      }
+                    ],
+                    "title": "Elevation Pitch"
+                  },
+                  "resume_path": {
+                    "anyOf": [
+                      {
+                        "type": "string"
+                      },
+                      {
+                        "type": "null"
+                      }
+                    ],
+                    "title": "Resume Path"
+                  },
+                  "github_url": {
+                    "anyOf": [
+                      {
+                        "type": "string"
+                      },
+                      {
+                        "type": "null"
+                      }
+                    ],
+                    "title": "Github Url"
+                  },
+                  "linkedin_url": {
+                    "anyOf": [
+                      {
+                        "type": "string"
+                      },
+                      {
+                        "type": "null"
+                      }
+                    ],
+                    "title": "Linkedin Url"
+                  },
+                  "other_links": {
+                    "anyOf": [
+                      {
+                        "type": "string"
+                      },
+                      {
+                        "type": "null"
+                      }
+                    ],
+                    "title": "Other Links"
+                  },
+                  "question_lens": {
+                    "anyOf": [
+                      {
+                        "type": "string"
+                      },
+                      {
+                        "type": "null"
+                      }
+                    ],
+                    "title": "Question Lens"
+                  },
+                  "question_fictional": {
+                    "anyOf": [
+                      {
+                        "type": "string"
+                      },
+                      {
+                        "type": "null"
+                      }
+                    ],
+                    "title": "Question Fictional"
+                  },
+                  "question_optional": {
+                    "anyOf": [
+                      {
+                        "type": "string"
+                      },
+                      {
+                        "type": "null"
+                      }
+                    ],
+                    "title": "Question Optional"
+                  },
+                  "mlh_marketing": {
+                    "anyOf": [
+                      {
+                        "type": "boolean"
+                      },
+                      {
+                        "type": "null"
+                      }
+                    ],
+                    "title": "Mlh Marketing"
+                  }
+                },
+                "type": "object",
+                "title": "ApplicationUpdate"
+              }
+            }
+          }
+        },
+        "responses": {
+          "200": {
+            "description": "Successful Response",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ApplicationRead"
+                }
+              }
+            }
+          },
+          "422": {
+            "description": "Validation Error",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/HTTPValidationError"
+                }
+              }
+            }
+          }
+        }
+      },
+      "delete": {
+        "tags": [
+          "Admin Hacker Application Management"
+        ],
+        "summary": "Delete a hacker application",
+        "description": "Allows an admin manager to delete an application.",
+        "operationId": "delete_application_api_v13_admins_applications__application_id__delete",
+        "security": [
+          {
+            "HTTPBearer": []
+          }
+        ],
+        "parameters": [
+          {
+            "name": "application_id",
+            "in": "path",
+            "required": true,
+            "schema": {
+              "type": "integer",
+              "title": "Application Id"
+            }
+          }
+        ],
+        "responses": {
+          "204": {
+            "description": "Successful Response"
+          },
+          "422": {
+            "description": "Validation Error",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/HTTPValidationError"
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    "/api/v13/admins/applications/{application_id}/resume": {
+      "get": {
+        "tags": [
+          "Admin Hacker Application Management"
+        ],
+        "summary": "Download resume for a specific application",
+        "description": "Returns the resume PDF file for the specified application. Requires admin access token. Only organizers can access this endpoint.",
+        "operationId": "get_resume_by_application_id_api_v13_admins_applications__application_id__resume_get",
+        "security": [
+          {
+            "HTTPBearer": []
+          }
+        ],
+        "parameters": [
+          {
+            "name": "application_id",
+            "in": "path",
+            "required": true,
+            "schema": {
+              "type": "integer",
+              "title": "Application Id"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "Successful Response"
+          },
+          "422": {
+            "description": "Validation Error",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/HTTPValidationError"
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    "/api/v13/admins/applications/assign-grader": {
+      "post": {
+        "tags": [
+          "Admin Hacker Application Management"
+        ],
+        "summary": "Assign an admin organizer to a range of applications to grade",
+        "description": "Admin manager can assign themselves or others to review a range of applications. The admin must be of role 'organizer'.",
+        "operationId": "assign_admin_organizer_to_applications_api_v13_admins_applications_assign_grader_post",
+        "requestBody": {
+          "content": {
+            "application/json": {
+              "schema": {
+                "properties": {
+                  "admin_id": {
+                    "type": "integer",
+                    "title": "Admin Id"
+                  },
+                  "lower_id": {
+                    "type": "integer",
+                    "title": "Lower Id"
+                  },
+                  "upper_id": {
+                    "type": "integer",
+                    "title": "Upper Id"
+                  }
+                },
+                "type": "object",
+                "required": [
+                  "admin_id",
+                  "lower_id",
+                  "upper_id"
+                ],
+                "title": "ApplicationAssignAdminOrganizerRequest"
+              }
+            }
+          },
+          "required": true
+        },
+        "responses": {
+          "200": {
+            "description": "Successful Response",
+            "content": {
+              "application/json": {
+                "schema": {}
+              }
+            }
+          },
+          "422": {
+            "description": "Validation Error",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/HTTPValidationError"
+                }
+              }
+            }
+          }
+        },
+        "security": [
+          {
+            "HTTPBearer": []
+          }
+        ]
+      }
+    },
+    "/api/v13/admins/hacker-bucks/add": {
+      "post": {
+        "tags": [
+          "Admin Hacker Bucks Management"
+        ],
+        "summary": "Add hacker bucks to a hacker",
+        "description": "Admin can reward a hacker by adding bucks to their account.",
+        "operationId": "add_hacker_bucks_api_v13_admins_hacker_bucks_add_post",
+        "requestBody": {
+          "content": {
+            "application/json": {
+              "schema": {
+                "properties": {
+                  "hacker_id": {
+                    "type": "integer",
+                    "title": "Hacker Id"
+                  },
+                  "amount": {
+                    "type": "integer",
+                    "exclusiveMinimum": 0.0,
+                    "title": "Amount"
+                  }
+                },
+                "type": "object",
+                "required": [
+                  "hacker_id",
+                  "amount"
+                ],
+                "title": "HackerBucksUpdateRequest"
+              }
+            }
+          },
+          "required": true
+        },
+        "responses": {
+          "200": {
+            "description": "Successful Response",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/HackerRead"
+                }
+              }
+            }
+          },
+          "422": {
+            "description": "Validation Error",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/HTTPValidationError"
+                }
+              }
+            }
+          }
+        },
+        "security": [
+          {
+            "HTTPBearer": []
+          }
+        ]
+      }
+    },
+    "/api/v13/admins/hacker-bucks/deduct": {
+      "post": {
+        "tags": [
+          "Admin Hacker Bucks Management"
+        ],
+        "summary": "Deduct hacker bucks from a hacker",
+        "description": "Admin can deduct bucks from a hacker (e.g., shop redemptions).",
+        "operationId": "deduct_hacker_bucks_api_v13_admins_hacker_bucks_deduct_post",
+        "requestBody": {
+          "content": {
+            "application/json": {
+              "schema": {
+                "properties": {
+                  "hacker_id": {
+                    "type": "integer",
+                    "title": "Hacker Id"
+                  },
+                  "amount": {
+                    "type": "integer",
+                    "exclusiveMinimum": 0.0,
+                    "title": "Amount"
+                  }
+                },
+                "type": "object",
+                "required": [
+                  "hacker_id",
+                  "amount"
+                ],
+                "title": "HackerBucksUpdateRequest"
+              }
+            }
+          },
+          "required": true
+        },
+        "responses": {
+          "200": {
+            "description": "Successful Response",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/HackerRead"
+                }
+              }
+            }
+          },
+          "422": {
+            "description": "Validation Error",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/HTTPValidationError"
+                }
+              }
+            }
+          }
+        },
+        "security": [
+          {
+            "HTTPBearer": []
+          }
+        ]
+      }
+    },
+    "/api/v13/mailing-list/": {
+      "get": {
+        "tags": [
+          "Mailing List"
+        ],
+        "summary": "List all mailing list signups (internal use)",
+        "description": "Requires internal API key in the `Authorization` header as `Bearer <INTERNAL_API_KEY>`.",
+        "operationId": "list_signups_api_v13_mailing_list__get",
+        "responses": {
+          "200": {
+            "description": "Successful Response",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "items": {
+                    "$ref": "#/components/schemas/MailingListSignupRead"
+                  },
+                  "type": "array",
+                  "title": "Response List Signups Api V13 Mailing List  Get"
+                }
+              }
+            }
+          }
+        },
+        "security": [
+          {
+            "HTTPBearer": []
+          }
+        ]
+      },
+      "post": {
+        "tags": [
+          "Mailing List"
+        ],
+        "summary": "Sign up an email to the mailing list",
+        "operationId": "signup_email_api_v13_mailing_list__post",
+        "requestBody": {
+          "content": {
+            "application/json": {
+              "schema": {
+                "properties": {
+                  "email": {
+                    "type": "string",
+                    "format": "email",
+                    "title": "Email"
+                  }
+                },
+                "type": "object",
+                "required": [
+                  "email"
+                ],
+                "title": "MailingListSignupRequest"
+              }
+            }
+          },
+          "required": true
+        },
+        "responses": {
+          "204": {
+            "description": "Successful Response"
+          },
+          "422": {
+            "description": "Validation Error",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/HTTPValidationError"
+                }
+              }
+            }
+          }
+        }
+      }
+    }
+  },
+  "components": {
+    "schemas": {
+      "AdminCreate": {
+        "properties": {
+          "admin_username": {
+            "type": "string",
+            "title": "Admin Username"
+          },
+          "admin_role": {
+            "$ref": "#/components/schemas/AdminRole"
+          },
+          "is_marking_manager": {
+            "type": "boolean",
+            "title": "Is Marking Manager",
+            "default": false
+          },
+          "is_shift_manager": {
+            "type": "boolean",
+            "title": "Is Shift Manager",
+            "default": false
+          },
+          "is_admin_manager": {
+            "type": "boolean",
+            "title": "Is Admin Manager",
+            "default": false
+          },
+          "admin_password": {
+            "type": "string",
+            "title": "Admin Password"
+          }
+        },
+        "type": "object",
+        "required": [
+          "admin_username",
+          "admin_role",
+          "admin_password"
+        ],
+        "title": "AdminCreate"
+      },
+      "AdminLoginRequest": {
+        "properties": {
+          "admin_username": {
+            "type": "string",
+            "title": "Admin Username"
+          },
+          "admin_password": {
+            "type": "string",
+            "title": "Admin Password"
+          }
+        },
+        "type": "object",
+        "required": [
+          "admin_username",
+          "admin_password"
+        ],
+        "title": "AdminLoginRequest"
+      },
+      "AdminRead": {
+        "properties": {
+          "admin_username": {
+            "type": "string",
+            "title": "Admin Username"
+          },
+          "admin_role": {
+            "$ref": "#/components/schemas/AdminRole"
+          },
+          "is_marking_manager": {
+            "type": "boolean",
+            "title": "Is Marking Manager",
+            "default": false
+          },
+          "is_shift_manager": {
+            "type": "boolean",
+            "title": "Is Shift Manager",
+            "default": false
+          },
+          "is_admin_manager": {
+            "type": "boolean",
+            "title": "Is Admin Manager",
+            "default": false
+          },
+          "admin_id": {
+            "type": "integer",
+            "title": "Admin Id"
+          },
+          "last_login": {
+            "anyOf": [
+              {
+                "type": "string",
+                "format": "date-time"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Last Login"
+          }
+        },
+        "type": "object",
+        "required": [
+          "admin_username",
+          "admin_role",
+          "admin_id"
+        ],
+        "title": "AdminRead"
+      },
+      "AdminRole": {
+        "type": "string",
+        "enum": [
+          "organizer",
+          "mentor",
+          "volunteer"
+        ],
+        "title": "AdminRole"
+      },
+      "AdminUpdate": {
+        "properties": {
+          "admin_password": {
+            "anyOf": [
+              {
+                "type": "string"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Admin Password"
+          },
+          "admin_role": {
+            "anyOf": [
+              {
+                "$ref": "#/components/schemas/AdminRole"
+              },
+              {
+                "type": "null"
+              }
+            ]
+          },
+          "is_marking_manager": {
+            "anyOf": [
+              {
+                "type": "boolean"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Is Marking Manager"
+          },
+          "is_shift_manager": {
+            "anyOf": [
+              {
+                "type": "boolean"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Is Shift Manager"
+          },
+          "is_admin_manager": {
+            "anyOf": [
+              {
+                "type": "boolean"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Is Admin Manager"
+          },
+          "last_login": {
+            "anyOf": [
+              {
+                "type": "string",
+                "format": "date-time"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Last Login"
+          }
+        },
+        "type": "object",
+        "title": "AdminUpdate"
+      },
+      "ApplicationAssignAdminOrganizerRequest": {
+        "properties": {
+          "admin_id": {
+            "type": "integer",
+            "title": "Admin Id"
+          },
+          "lower_id": {
+            "type": "integer",
+            "title": "Lower Id"
+          },
+          "upper_id": {
+            "type": "integer",
+            "title": "Upper Id"
+          }
+        },
+        "type": "object",
+        "required": [
+          "admin_id",
+          "lower_id",
+          "upper_id"
+        ],
+        "title": "ApplicationAssignAdminOrganizerRequest"
+      },
+      "ApplicationCreate": {
+        "properties": {
+          "hacker_id": {
+            "type": "integer",
+            "title": "Hacker Id"
+          },
+          "admin_id": {
+            "anyOf": [
+              {
+                "type": "integer"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Admin Id"
+          },
+          "status": {
+            "$ref": "#/components/schemas/ApplicationStatus",
+            "default": "pending"
+          },
+          "first_name": {
+            "type": "string",
+            "title": "First Name",
+            "default": ""
+          },
+          "last_name": {
+            "type": "string",
+            "title": "Last Name",
+            "default": ""
+          },
+          "preferred_name": {
+            "type": "string",
+            "title": "Preferred Name",
+            "default": ""
+          },
+          "gender": {
+            "type": "string",
+            "title": "Gender",
+            "default": ""
+          },
+          "pronoun": {
+            "type": "string",
+            "title": "Pronoun",
+            "default": ""
+          },
+          "age": {
+            "type": "integer",
+            "title": "Age",
+            "default": 0
+          },
+          "discord_username": {
+            "type": "string",
+            "title": "Discord Username",
+            "default": ""
+          },
+          "phone_number": {
+            "type": "string",
+            "title": "Phone Number",
+            "default": ""
+          },
+          "email": {
+            "type": "string",
+            "format": "email",
+            "title": "Email",
+            "default": "unknown@unknown.com"
+          },
+          "school": {
+            "type": "string",
+            "title": "School",
+            "default": ""
+          },
+          "level_of_study": {
+            "type": "string",
+            "title": "Level Of Study",
+            "default": ""
+          },
+          "major": {
+            "type": "string",
+            "title": "Major",
+            "default": ""
+          },
+          "num_hackathons": {
+            "type": "integer",
+            "title": "Num Hackathons",
+            "default": 0
+          },
+          "country_of_residence": {
+            "type": "string",
+            "title": "Country Of Residence",
+            "default": ""
+          },
+          "city": {
+            "type": "string",
+            "title": "City",
+            "default": ""
+          },
+          "elevation_pitch": {
+            "type": "string",
+            "title": "Elevation Pitch",
+            "default": ""
+          },
+          "resume_path": {
+            "type": "string",
+            "title": "Resume Path",
+            "default": ""
+          },
+          "github_url": {
+            "type": "string",
+            "title": "Github Url",
+            "default": ""
+          },
+          "linkedin_url": {
+            "type": "string",
+            "title": "Linkedin Url",
+            "default": ""
+          },
+          "other_links": {
+            "type": "string",
+            "title": "Other Links",
+            "default": ""
+          },
+          "ethnicity": {
+            "type": "string",
+            "title": "Ethnicity",
+            "default": ""
+          },
+          "question_lens": {
+            "type": "string",
+            "title": "Question Lens",
+            "default": ""
+          },
+          "question_fictional": {
+            "type": "string",
+            "title": "Question Fictional",
+            "default": ""
+          },
+          "question_optional": {
+            "type": "string",
+            "title": "Question Optional",
+            "default": ""
+          },
+          "mlh_coc": {
+            "type": "boolean",
+            "title": "Mlh Coc",
+            "default": false
+          },
+          "mlh_ctc_pp": {
+            "type": "boolean",
+            "title": "Mlh Ctc Pp",
+            "default": false
+          },
+          "mlh_marketing": {
+            "type": "boolean",
+            "title": "Mlh Marketing",
+            "default": false
+          }
+        },
+        "type": "object",
+        "required": [
+          "hacker_id"
+        ],
+        "title": "ApplicationCreate"
+      },
+      "ApplicationRead": {
+        "properties": {
+          "hacker_id": {
+            "type": "integer",
+            "title": "Hacker Id"
+          },
+          "admin_id": {
+            "anyOf": [
+              {
+                "type": "integer"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Admin Id"
+          },
+          "status": {
+            "$ref": "#/components/schemas/ApplicationStatus",
+            "default": "pending"
+          },
+          "first_name": {
+            "type": "string",
+            "title": "First Name"
+          },
+          "last_name": {
+            "type": "string",
+            "title": "Last Name"
+          },
+          "preferred_name": {
+            "type": "string",
+            "title": "Preferred Name"
+          },
+          "gender": {
+            "type": "string",
+            "title": "Gender"
+          },
+          "pronoun": {
+            "type": "string",
+            "title": "Pronoun"
+          },
+          "age": {
+            "type": "integer",
+            "title": "Age"
+          },
+          "discord_username": {
+            "type": "string",
+            "title": "Discord Username"
+          },
+          "phone_number": {
+            "type": "string",
+            "title": "Phone Number"
+          },
+          "email": {
+            "type": "string",
+            "format": "email",
+            "title": "Email"
+          },
+          "school": {
+            "type": "string",
+            "title": "School"
+          },
+          "level_of_study": {
+            "type": "string",
+            "title": "Level Of Study"
+          },
+          "major": {
+            "type": "string",
+            "title": "Major"
+          },
+          "num_hackathons": {
+            "type": "integer",
+            "title": "Num Hackathons"
+          },
+          "country_of_residence": {
+            "type": "string",
+            "title": "Country Of Residence"
+          },
+          "city": {
+            "type": "string",
+            "title": "City"
+          },
+          "elevation_pitch": {
+            "type": "string",
+            "title": "Elevation Pitch"
+          },
+          "resume_path": {
+            "type": "string",
+            "title": "Resume Path"
+          },
+          "github_url": {
+            "type": "string",
+            "title": "Github Url"
+          },
+          "linkedin_url": {
+            "type": "string",
+            "title": "Linkedin Url"
+          },
+          "other_links": {
+            "type": "string",
+            "title": "Other Links"
+          },
+          "ethnicity": {
+            "type": "string",
+            "title": "Ethnicity"
+          },
+          "question_lens": {
+            "type": "string",
+            "title": "Question Lens"
+          },
+          "question_fictional": {
+            "type": "string",
+            "title": "Question Fictional"
+          },
+          "question_optional": {
+            "type": "string",
+            "title": "Question Optional"
+          },
+          "mlh_coc": {
+            "type": "boolean",
+            "title": "Mlh Coc",
+            "default": false
+          },
+          "mlh_ctc_pp": {
+            "type": "boolean",
+            "title": "Mlh Ctc Pp",
+            "default": false
+          },
+          "mlh_marketing": {
+            "type": "boolean",
+            "title": "Mlh Marketing",
+            "default": false
+          },
+          "application_id": {
+            "type": "integer",
+            "title": "Application Id"
+          },
+          "created_at": {
+            "type": "string",
+            "format": "date-time",
+            "title": "Created At"
+          },
+          "updated_at": {
+            "type": "string",
+            "format": "date-time",
+            "title": "Updated At"
+          }
+        },
+        "type": "object",
+        "required": [
+          "hacker_id",
+          "first_name",
+          "last_name",
+          "preferred_name",
+          "gender",
+          "pronoun",
+          "age",
+          "discord_username",
+          "phone_number",
+          "email",
+          "school",
+          "level_of_study",
+          "major",
+          "num_hackathons",
+          "country_of_residence",
+          "city",
+          "elevation_pitch",
+          "resume_path",
+          "github_url",
+          "linkedin_url",
+          "other_links",
+          "ethnicity",
+          "question_lens",
+          "question_fictional",
+          "question_optional",
+          "application_id",
+          "created_at",
+          "updated_at"
+        ],
+        "title": "ApplicationRead"
+      },
+      "ApplicationStatus": {
+        "type": "string",
+        "enum": [
+          "pending",
+          "accepted",
+          "waitlisted",
+          "rejected"
+        ],
+        "title": "ApplicationStatus"
+      },
+      "ApplicationUpdate": {
+        "properties": {
+          "status": {
+            "anyOf": [
+              {
+                "$ref": "#/components/schemas/ApplicationStatus"
+              },
+              {
+                "type": "null"
+              }
+            ]
+          },
+          "admin_id": {
+            "anyOf": [
+              {
+                "type": "integer"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Admin Id"
+          },
+          "elevation_pitch": {
+            "anyOf": [
+              {
+                "type": "string"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Elevation Pitch"
+          },
+          "resume_path": {
+            "anyOf": [
+              {
+                "type": "string"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Resume Path"
+          },
+          "github_url": {
+            "anyOf": [
+              {
+                "type": "string"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Github Url"
+          },
+          "linkedin_url": {
+            "anyOf": [
+              {
+                "type": "string"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Linkedin Url"
+          },
+          "other_links": {
+            "anyOf": [
+              {
+                "type": "string"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Other Links"
+          },
+          "question_lens": {
+            "anyOf": [
+              {
+                "type": "string"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Question Lens"
+          },
+          "question_fictional": {
+            "anyOf": [
+              {
+                "type": "string"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Question Fictional"
+          },
+          "question_optional": {
+            "anyOf": [
+              {
+                "type": "string"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Question Optional"
+          },
+          "mlh_marketing": {
+            "anyOf": [
+              {
+                "type": "boolean"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Mlh Marketing"
+          }
+        },
+        "type": "object",
+        "title": "ApplicationUpdate"
+      },
+      "Body_upload_resume_api_v13_hackers_application_resume_post": {
+        "properties": {
+          "resume": {
+            "type": "string",
+            "format": "binary",
+            "title": "Resume"
+          }
+        },
+        "type": "object",
+        "required": [
+          "resume"
+        ],
+        "title": "Body_upload_resume_api_v13_hackers_application_resume_post"
+      },
+      "GoogleAuthCodeRequest": {
+        "properties": {
+          "code": {
+            "type": "string",
+            "title": "Code"
+          },
+          "code_verifier": {
+            "type": "string",
+            "title": "Code Verifier"
+          }
+        },
+        "type": "object",
+        "required": [
+          "code",
+          "code_verifier"
+        ],
+        "title": "GoogleAuthCodeRequest"
+      },
+      "HTTPValidationError": {
+        "properties": {
+          "detail": {
+            "items": {
+              "$ref": "#/components/schemas/ValidationError"
+            },
+            "type": "array",
+            "title": "Detail"
+          }
+        },
+        "type": "object",
+        "title": "HTTPValidationError"
+      },
+      "HackerBucksUpdateRequest": {
+        "properties": {
+          "hacker_id": {
+            "type": "integer",
+            "title": "Hacker Id"
+          },
+          "amount": {
+            "type": "integer",
+            "exclusiveMinimum": 0.0,
+            "title": "Amount"
+          }
+        },
+        "type": "object",
+        "required": [
+          "hacker_id",
+          "amount"
+        ],
+        "title": "HackerBucksUpdateRequest"
+      },
+      "HackerEmailVerifyRequest": {
+        "properties": {
+          "hacker_email": {
+            "type": "string",
+            "format": "email",
+            "title": "Hacker Email"
+          }
+        },
+        "type": "object",
+        "required": [
+          "hacker_email"
+        ],
+        "title": "HackerEmailVerifyRequest"
+      },
+      "HackerLoginRequest": {
+        "properties": {
+          "hacker_email": {
+            "type": "string",
+            "format": "email",
+            "title": "Hacker Email"
+          },
+          "hacker_password": {
+            "type": "string",
+            "title": "Hacker Password"
+          }
+        },
+        "type": "object",
+        "required": [
+          "hacker_email",
+          "hacker_password"
+        ],
+        "title": "HackerLoginRequest"
+      },
+      "HackerPasswordResetRequest": {
+        "properties": {
+          "new_password": {
+            "type": "string",
+            "title": "New Password"
+          },
+          "new_password_cmp": {
+            "type": "string",
+            "title": "New Password Cmp"
+          }
+        },
+        "type": "object",
+        "required": [
+          "new_password",
+          "new_password_cmp"
+        ],
+        "title": "HackerPasswordResetRequest"
+      },
+      "HackerPersonalityUpdateRequest": {
+        "properties": {
+          "hacker_personality": {
+            "type": "string",
+            "maxLength": 255,
+            "minLength": 1,
+            "title": "Hacker Personality"
+          }
+        },
+        "type": "object",
+        "required": [
+          "hacker_personality"
+        ],
+        "title": "HackerPersonalityUpdateRequest"
+      },
+      "HackerProfileRead": {
+        "properties": {
+          "hacker_id": {
+            "type": "integer",
+            "title": "Hacker Id"
+          },
+          "hacker_fname": {
+            "type": "string",
+            "title": "Hacker Fname"
+          },
+          "hacker_lname": {
+            "type": "string",
+            "title": "Hacker Lname"
+          },
+          "hacker_email": {
+            "type": "string",
+            "format": "email",
+            "title": "Hacker Email"
+          },
+          "hacker_verified": {
+            "type": "boolean",
+            "title": "Hacker Verified"
+          },
+          "hacker_completed_rsvp": {
+            "type": "boolean",
+            "title": "Hacker Completed Rsvp",
+            "default": false
+          },
+          "hacker_discord": {
+            "anyOf": [
+              {
+                "type": "string"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Hacker Discord"
+          },
+          "hacker_personality": {
+            "anyOf": [
+              {
+                "type": "string"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Hacker Personality"
+          },
+          "hacker_bucks": {
+            "type": "integer",
+            "title": "Hacker Bucks"
+          },
+          "pronoun": {
+            "anyOf": [
+              {
+                "type": "string"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Pronoun"
+          },
+          "application_status": {
+            "anyOf": [
+              {
+                "$ref": "#/components/schemas/ApplicationStatus"
+              },
+              {
+                "type": "null"
+              }
+            ]
+          },
+          "age": {
+            "anyOf": [
+              {
+                "type": "integer"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Age"
+          },
+          "level_of_study": {
+            "anyOf": [
+              {
+                "type": "string"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Level Of Study"
+          },
+          "school": {
+            "anyOf": [
+              {
+                "type": "string"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "School"
+          },
+          "major": {
+            "anyOf": [
+              {
+                "type": "string"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Major"
+          },
+          "dietary_condition": {
+            "anyOf": [
+              {
+                "type": "string"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Dietary Condition"
+          }
+        },
+        "type": "object",
+        "required": [
+          "hacker_id",
+          "hacker_fname",
+          "hacker_lname",
+          "hacker_email",
+          "hacker_verified",
+          "hacker_bucks"
+        ],
+        "title": "HackerProfileRead"
+      },
+      "HackerRead": {
+        "properties": {
+          "hacker_fname": {
+            "type": "string",
+            "title": "Hacker Fname"
+          },
+          "hacker_lname": {
+            "type": "string",
+            "title": "Hacker Lname"
+          },
+          "hacker_email": {
+            "type": "string",
+            "format": "email",
+            "title": "Hacker Email"
+          },
+          "hacker_id": {
+            "type": "integer",
+            "title": "Hacker Id"
+          },
+          "hacker_verified": {
+            "type": "boolean",
+            "title": "Hacker Verified"
+          },
+          "hacker_personality": {
+            "anyOf": [
+              {
+                "type": "string"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Hacker Personality"
+          },
+          "hacker_bucks": {
+            "type": "integer",
+            "title": "Hacker Bucks"
+          }
+        },
+        "type": "object",
+        "required": [
+          "hacker_fname",
+          "hacker_lname",
+          "hacker_email",
+          "hacker_id",
+          "hacker_verified",
+          "hacker_bucks"
+        ],
+        "title": "HackerRead"
+      },
+      "HackerRegister": {
+        "properties": {
+          "hacker_fname": {
+            "type": "string",
+            "title": "Hacker Fname"
+          },
+          "hacker_lname": {
+            "type": "string",
+            "title": "Hacker Lname"
+          },
+          "hacker_email": {
+            "type": "string",
+            "format": "email",
+            "title": "Hacker Email"
+          },
+          "hacker_password": {
+            "anyOf": [
+              {
+                "type": "string"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Hacker Password"
+          },
+          "hacker_verified": {
+            "type": "boolean",
+            "title": "Hacker Verified",
+            "default": false
+          },
+          "hacker_password_cmp": {
+            "type": "string",
+            "title": "Hacker Password Cmp"
+          }
+        },
+        "type": "object",
+        "required": [
+          "hacker_fname",
+          "hacker_lname",
+          "hacker_email",
+          "hacker_password_cmp"
+        ],
+        "title": "HackerRegister"
+      },
+      "HackerResetPasswordEmailRequest": {
+        "properties": {
+          "hacker_email": {
+            "type": "string",
+            "format": "email",
+            "title": "Hacker Email"
+          }
+        },
+        "type": "object",
+        "required": [
+          "hacker_email"
+        ],
+        "title": "HackerResetPasswordEmailRequest"
+      },
+      "MailingListSignupRead": {
+        "properties": {
+          "email": {
+            "type": "string",
+            "format": "email",
+            "title": "Email"
+          },
+          "created_at": {
+            "type": "string",
+            "format": "date-time",
+            "title": "Created At"
+          }
+        },
+        "type": "object",
+        "required": [
+          "email",
+          "created_at"
+        ],
+        "title": "MailingListSignupRead"
+      },
+      "MailingListSignupRequest": {
+        "properties": {
+          "email": {
+            "type": "string",
+            "format": "email",
+            "title": "Email"
+          }
+        },
+        "type": "object",
+        "required": [
+          "email"
+        ],
+        "title": "MailingListSignupRequest"
+      },
+      "RSVPCreate": {
+        "properties": {
+          "shirt_size": {
+            "anyOf": [
+              {
+                "type": "string"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Shirt Size"
+          },
+          "in_person": {
+            "anyOf": [
+              {
+                "type": "boolean"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "In Person"
+          },
+          "address": {
+            "anyOf": [
+              {
+                "type": "string"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Address"
+          },
+          "phone_num": {
+            "anyOf": [
+              {
+                "type": "string"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Phone Num"
+          },
+          "emergency_num": {
+            "anyOf": [
+              {
+                "type": "string"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Emergency Num"
+          },
+          "emergency_name": {
+            "anyOf": [
+              {
+                "type": "string"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Emergency Name"
+          },
+          "dietary_condition": {
+            "anyOf": [
+              {
+                "type": "string"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Dietary Condition"
+          }
+        },
+        "type": "object",
+        "title": "RSVPCreate"
+      },
+      "RSVPRead": {
+        "properties": {
+          "shirt_size": {
+            "anyOf": [
+              {
+                "type": "string"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Shirt Size"
+          },
+          "in_person": {
+            "anyOf": [
+              {
+                "type": "boolean"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "In Person"
+          },
+          "address": {
+            "anyOf": [
+              {
+                "type": "string"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Address"
+          },
+          "phone_num": {
+            "anyOf": [
+              {
+                "type": "string"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Phone Num"
+          },
+          "emergency_num": {
+            "anyOf": [
+              {
+                "type": "string"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Emergency Num"
+          },
+          "emergency_name": {
+            "anyOf": [
+              {
+                "type": "string"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Emergency Name"
+          },
+          "dietary_condition": {
+            "anyOf": [
+              {
+                "type": "string"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Dietary Condition"
+          },
+          "hacker_id": {
+            "type": "integer",
+            "title": "Hacker Id"
+          }
+        },
+        "type": "object",
+        "required": [
+          "hacker_id"
+        ],
+        "title": "RSVPRead"
+      },
+      "TokenPair": {
+        "properties": {
+          "access_token": {
+            "type": "string",
+            "title": "Access Token"
+          },
+          "refresh_token": {
+            "type": "string",
+            "title": "Refresh Token"
+          }
+        },
+        "type": "object",
+        "required": [
+          "access_token",
+          "refresh_token"
+        ],
+        "title": "TokenPair"
+      },
+      "TokenRefreshRequest": {
+        "properties": {
+          "refresh_token": {
+            "type": "string",
+            "title": "Refresh Token"
+          }
+        },
+        "type": "object",
+        "required": [
+          "refresh_token"
+        ],
+        "title": "TokenRefreshRequest"
+      },
+      "ValidationError": {
+        "properties": {
+          "loc": {
+            "items": {
+              "anyOf": [
+                {
+                  "type": "string"
+                },
+                {
+                  "type": "integer"
+                }
+              ]
+            },
+            "type": "array",
+            "title": "Location"
+          },
+          "msg": {
+            "type": "string",
+            "title": "Message"
+          },
+          "type": {
+            "type": "string",
+            "title": "Error Type"
+          }
+        },
+        "type": "object",
+        "required": [
+          "loc",
+          "msg",
+          "type"
+        ],
+        "title": "ValidationError"
+      }
+    },
+    "securitySchemes": {
+      "HTTPBearer": {
+        "type": "http",
+        "scheme": "bearer"
+      }
+    }
+  }
+}
