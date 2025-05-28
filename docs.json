@@ -36,7 +36,100 @@
       },
       {
         "tab": "API Reference",
-          "openapi": "openapi.json"
+        "groups": [
+          {
+            "group": "Root",
+            "pages": [
+              "api-reference/root/welcome-root"
+            ]
+          },
+          {
+            "group": "Health",
+            "pages": [
+              "api-reference/health/health-check"
+            ]
+          },
+          {
+            "group": "Hackers",
+            "pages": [
+              "api-reference/hackers/get-the-profile-of-the-currently-authenticated-hacker",
+              "api-reference/hackers/register-a-new-hacker-account",
+              "api-reference/hackers/login-a-hacker-and-get-accessrefresh-tokens",
+              "api-reference/hackers/logout-a-hacker-and-revoke-tokens",
+              "api-reference/hackers/refresh-a-hackers-access-and-refresh-token-pair",
+              "api-reference/hackers/submit-hacker-personality-quiz-result",
+              "api-reference/hackers/submit-rsvp-for-the-currently-authenticated-hacker"
+            ]
+          },
+          {
+            "group": "Hacker Application",
+            "pages": [
+              "api-reference/hacker-application/get-current-hackers-application",
+              "api-reference/hacker-application/submit-a-new-application",
+              "api-reference/hacker-application/download-resume-pdf-for-the-authenticated-hacker",
+              "api-reference/hacker-application/upload-resume-pdf-for-the-authenticated-hacker"
+            ]
+          },
+          {
+            "group": "Hacker Reset Password",
+            "pages": [
+              "api-reference/hacker-reset-password/reset-password-for-the-authenticated-hacker",
+              "api-reference/hacker-reset-password/send-password-reset-email"
+            ]
+          },
+          {
+            "group": "Hacker Verification",
+            "pages": [
+              "api-reference/hacker-verification/verify-hacker-email-from-token",
+              "api-reference/hacker-verification/send-verification-email-to-a-hacker"
+            ]
+          },
+          {
+            "group": "Hackers Google Auth",
+            "pages": [
+              "api-reference/hackers-google-auth/authenticate-via-google-auth-code-+-pkce"
+            ]
+          },
+          {
+            "group": "Admins",
+            "pages": [
+              "api-reference/admins/get-a-list-of-all-admins-admin-manager-only",
+              "api-reference/admins/create-a-new-admin-user",
+              "api-reference/admins/get-the-profile-of-the-currently-authenticated-admin",
+              "api-reference/admins/get-admin-details-by-id-requires-bearer-token",
+              "api-reference/admins/update-an-admin-by-id",
+              "api-reference/admins/delete-an-admin-by-id",
+              "api-reference/admins/login-as-an-admin",
+              "api-reference/admins/refresh-admin-access-and-refresh-token-pair",
+              "api-reference/admins/logout-an-admin"
+            ]
+          },
+          {
+            "group": "Admin Hacker Application Management",
+            "pages": [
+              "api-reference/admin-hacker-application-management/get-all-hacker-applications",
+              "api-reference/admin-hacker-application-management/get-a-hacker-application-by-id",
+              "api-reference/admin-hacker-application-management/update-a-hacker-application",
+              "api-reference/admin-hacker-application-management/delete-a-hacker-application",
+              "api-reference/admin-hacker-application-management/download-resume-for-a-specific-application",
+              "api-reference/admin-hacker-application-management/assign-an-admin-organizer-to-a-range-of-applications-to-grade"
+            ]
+          },
+          {
+            "group": "Admin Hacker Bucks Management",
+            "pages": [
+              "api-reference/admin-hacker-bucks-management/add-hacker-bucks-to-a-hacker",
+              "api-reference/admin-hacker-bucks-management/deduct-hacker-bucks-from-a-hacker"
+            ]
+          },
+          {
+            "group": "Mailing List",
+            "pages": [
+              "api-reference/mailing-list/list-all-mailing-list-signups-internal-use",
+              "api-reference/mailing-list/sign-up-an-email-to-the-mailing-list"
+            ]
+          }
+        ]
       }
     ],
     "global": {
